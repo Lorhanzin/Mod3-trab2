@@ -1,0 +1,50 @@
+-- Tabela de cadastro de empresas
+CREATE TABLE IF NOT EXISTS CADASTRO_EMPRESA (
+  CNPJ INTEGER NOT NULL PRIMARY KEY, -- chave primária que identifica a empresa
+  Nome VARCHAR(255), -- nome da empresa
+  Telefone INTEGER, -- número de telefone da empresa
+  Endereco VARCHAR(255) -- endereço da empresa
+);
+
+-- Tabela de cadastro de tecnologias
+CREATE TABLE IF NOT EXISTS CADASTRO_TECNOLOGIA (
+  ID_Cad_Tec INTEGER NOT NULL PRIMARY KEY, -- chave primária que identifica a tecnologia
+  Nome VARCHAR(255), -- nome da tecnologia
+  Area VARCHAR(255) -- área da tecnologia
+);
+
+-- Tabela de relatórios
+CREATE TABLE IF NOT EXISTS RELATORIO (
+  ID_Relatorio INTEGER NOT NULL PRIMARY KEY, -- chave primária que identifica o relatório
+  Data_Compilacao DATE, -- data em que o relatório foi compilado
+  CNPJ INTEGER NOT NULL, -- chave estrangeira que identifica a empresa correspondente
+  FOREIGN KEY (CNPJ) REFERENCES CADASTRO_EMPRESA(CNPJ) -- chave estrangeira que faz referência à tabela de cadastro de empresas
+);
+
+-- Tabela de cursos
+CREATE TABLE IF NOT EXISTS CURSOS (
+  ID_Curso INTEGER NOT NULL PRIMARY KEY, -- chave primária que identifica o curso
+  Nome VARCHAR(255), -- nome do curso
+  CargaHoraria INTEGER, -- carga horária do curso
+  Palestrante VARCHAR(255), -- nome do palestrante responsável pelo curso
+  Turno VARCHAR(255), -- turno em que o curso ocorre
+  Stack VARCHAR(255), -- tecnologia abordada no curso
+  CNPJ INTEGER NOT NULL, -- chave estrangeira que identifica a empresa correspondente
+  FOREIGN KEY (CNPJ) REFERENCES CADASTRO_EMPRESA(CNPJ) -- chave estrangeira que faz referência à tabela de cadastro de empresas
+);
+
+-- Tabela de relacionamento entre relatórios e tecnologias
+CREATE TABLE IF NOT EXISTS RELATORIO_TECNOLOGIA (
+  ID_Relatorio INTEGER NOT NULL, -- chave estrangeira que identifica o relatório correspondente
+  ID_Cad_Tec INTEGER NOT NULL, -- chave estrangeira que identifica a tecnologia correspondente
+  PRIMARY KEY (ID_Relatorio, ID_Cad_Tec), -- chave primária composta pelas chaves estrangeiras de ambas as tabelas
+  FOREIGN KEY (ID_Relatorio) REFERENCES RELATORIO(ID_Relatorio), -- chave estrangeira que faz referência à tabela de relatórios
+  FOREIGN KEY (ID_Cad_Tec) REFERENCES CADASTRO_TECNOLOGIA(ID_Cad_Tec) -- chave estrangeira que faz referência à tabela de cadastro de tecnologias
+);
+
+-- Tabela de relacionamento entre empresas e cursos
+CREATE TABLE IF NOT EXISTS EMPRESA_CURSOS (
+  CNPJ INTEGER NOT NULL, -- chave estrangeira que identifica a empresa correspondente
+  ID_Curso INTEGER NOT NULL, -- chave estrangeira que identifica o curso correspondente
+  PRIMARY KEY (CNPJ, ID_Curso), -- chave primária composta pelas chaves estrangeiras de ambas as tabelas
+  FOREIGN KEY (CNPJ) REFERENCES CADASTRO_EMPRESA(CNPJ), -- chave estrangeira
